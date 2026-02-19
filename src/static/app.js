@@ -3,18 +3,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const activitySelect = document.getElementById("activity");
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
+  const filterButtons = document.querySelectorAll(".filter-btn");
+  let allActivitiesData = {};
 
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
       const response = await fetch("/activities");
       const activities = await response.json();
+      allActivitiesData = activities;
 
       // Clear loading message
       activitiesList.innerHTML = "";
 
-      // Populate activities list
-      Object.entries(activities).forEach(([name, details]) => {
+      displayActivities(activities);
+    } catch (error) {
+      activitiesList.innerHTML =
+        "<p>Failed to load activities. Please try again later.</p>";
+      console.error("Error fetching activities:", error);
+    }
+  }
+
+  // Function to display activities
+  function displayActivities(activities) {
+    // Clear current list
+    activitiesList.innerHTML = "";
+    activitySelect.innerHTML = '<option value="">-- Select an activity --</option>';
+
+    // Populate activities list
+    Object.entries(activities).forEach(([name, details]) => {
         const activityCard = document.createElement("div");
         activityCard.className = "activity-card";
 
@@ -39,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         activityCard.innerHTML = `
           <h4>${name}</h4>
+          <p class="activity-category"><span class="category-badge">${details.category}</span></p>
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
@@ -46,6 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
             ${participantsHTML}
           </div>
         `;
+
+        // Add data attribute for filtering
+        activityCard.setAttribute("data-category", details.category);
 
         activitiesList.appendChild(activityCard);
 
@@ -60,12 +81,35 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".delete-btn").forEach((button) => {
         button.addEventListener("click", handleUnregister);
       });
-    } catch (error) {
-      activitiesList.innerHTML =
-        "<p>Failed to load activities. Please try again later.</p>";
-      console.error("Error fetching activities:", error);
+    });
+  }
+
+  // Filter activities by category
+  function filterActivities(category) {
+    if (category === "all") {
+      displayActivities(allActivitiesData);
+    } else {
+      const filteredActivities = Object.fromEntries(
+        Object.entries(allActivitiesData).filter(
+          ([name, details]) => details.category === category
+        )
+      );
+      displayActivities(filteredActivities);
     }
   }
+
+  // Add event listeners to filter buttons
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      // Remove active class from all buttons
+      filterButtons.forEach((btn) => btn.classList.remove("active"));
+      // Add active class to clicked button
+      button.classList.add("active");
+      // Filter activities
+      const category = button.getAttribute("data-category");
+      filterActivities(category);
+    });
+  });
 
   // Handle unregister functionality
   async function handleUnregister(event) {
