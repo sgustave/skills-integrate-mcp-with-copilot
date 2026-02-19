@@ -192,6 +192,68 @@ button:hover {
   display: none;
 }
 
+/* Category filter buttons */
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+}
+
+.filter-btn {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 2px solid #ddd;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.filter-btn:hover {
+  background-color: #e0e0e0;
+  border-color: #1a237e;
+  transform: translateY(-2px);
+}
+
+.filter-btn.active {
+  background-color: #1a237e;
+  color: white;
+  border-color: #1a237e;
+}
+
+.activity-category {
+  margin-bottom: 8px;
+}
+
+.category-badge {
+  display: inline-block;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Responsive filter buttons for mobile */
+@media (max-width: 768px) {
+  .filter-buttons {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .filter-btn {
+    flex-shrink: 0;
+  }
+}
+
 footer {
   text-align: center;
   margin-top: 30px;
